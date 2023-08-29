@@ -87,6 +87,10 @@ public class GriefPreventionExpansion extends PlaceholderExpansion implements Co
     @Override
     public List<String> getPlaceholders() {
         List<String> placeholders = new ArrayList<>();
+        placeholders.add("%griefprevention_totalclaims%");
+        placeholders.add("%griefprevention_totalclaims_formatted%");
+        placeholders.add("%griefprevention_usedclaims%");
+        placeholders.add("%griefprevention_usedclaims_formatted%");
         placeholders.add("%griefprevention_claims%");
         placeholders.add("%griefprevention_claims_formatted%");
         placeholders.add("%griefprevention_bonusclaims%");
@@ -117,6 +121,29 @@ public class GriefPreventionExpansion extends PlaceholderExpansion implements Co
 
         DataStore DataS = plugin.dataStore;
         PlayerData pd = DataS.getPlayerData(player.getUniqueId());
+
+        /*
+         %griefprevention_totalclaims%
+         %griefprevention_totalclaims_formatted%
+        */
+
+        if (identifier.startsWith("totalclaims")) {
+            int totalClaims = pd.getClaims().size() + pd.getAccruedClaimBlocks();
+            return identifier.endsWith("formatted") ? fixMoney(totalClaims) : String.valueOf(totalClaims);
+        }
+
+        /*
+         %griefprevention_usedclaims%
+         %griefprevention_usedclaims_formatted%
+        */
+
+        if (identifier.startsWith("usedclaims")) {
+            int totalClaims = pd.getClaims().size() + pd.getAccruedClaimBlocks();
+            int remainingClaims = pd.getRemainingClaimBlocks();
+
+            int usedClaims = totalClaims - remainingClaims;
+            return identifier.endsWith("formatted") ? fixMoney(usedClaims) : String.valueOf(usedClaims);
+        }
 
         /*
          %griefprevention_claims%
